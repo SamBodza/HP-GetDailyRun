@@ -25,7 +25,7 @@ def move_folder(logger, folder):
         for file in files:
             try:
                 src = os.path.join(paths['src_dir'], folder, file)
-                dst = os.path.join(paths['src_dir'], folder, file)
+                dst = os.path.join(paths['dst_dir'], folder, file)
                 logger.info(src)
                 logger.info(dst)
                 #command = f'rsync -av {src} {dst}'
