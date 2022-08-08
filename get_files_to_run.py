@@ -27,7 +27,7 @@ def move_folder(logger, folder):
                 src = os.path.join(paths['src_dir'], folder, file)
                 dst = os.path.join(paths['src_dir'], folder, file)
                 command = f'rsync -av {src} {dst}'
-                os.command(command)
+                os.popen(command)
                 if not re.match("^.+\.pdb$", file):
                     update_file(logger, folder, file)
             except Exception as e:
