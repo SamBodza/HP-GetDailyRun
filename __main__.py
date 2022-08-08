@@ -3,7 +3,7 @@ from datetime import date
 
 from config_parser import get_config
 from create_logger import create_logger
-from get_files_to_run import get_folders_to_sync, move_folders
+from get_files_to_run import move_folders
 
 
 def main():
