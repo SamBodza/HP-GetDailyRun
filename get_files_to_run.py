@@ -26,6 +26,8 @@ def move_folder(logger, folder):
             try:
                 src = os.path.join(paths['src_dir'], folder, file)
                 dst = os.path.join(paths['src_dir'], folder, file)
+                logger.info(src)
+                logger.info(dst)
                 command = f'rsync -av {src} {dst}'
                 os.popen(command)
                 if not re.match("^.+\.pdb$", file):
