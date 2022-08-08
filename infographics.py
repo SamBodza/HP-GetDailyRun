@@ -11,3 +11,5 @@ error_query = """
     WHERE freq > 0
         ORDER BY freq DESC
 """
+
+
