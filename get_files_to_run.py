@@ -28,11 +28,10 @@ def move_folder(logger, folder):
                 dst = os.path.join(paths['dst_dir'], folder, file)
                 logger.info(src)
                 logger.info(dst)
-                #command = f'rsync -av {src} {dst}'
-                #os.popen(command)
+                command = f'rsync -av {src} {dst}'
+                os.popen(command)
                 if not re.match("^.+\.pdb$", file):
-                    #update_file(logger, folder, file)
-                    pass
+                    update_file(logger, folder, file)
             except Exception as e:
                 logger.error(f'failed to sync {folder}/{file}: {e}')
 
