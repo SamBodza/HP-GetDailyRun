@@ -11,8 +11,7 @@ def main():
     logger = create_logger(os.path.join(config.get('LOGGING', 'LOGGING_PATH'), f'{date.today()}.log'),
                            __file__,
                            config.get('LOGGING', 'LOGGING_LEVEL'))
-    folders = get_folders_to_sync(logger)
-    move_folders(logger, folders)
+    move_folders(logger)
 
 
 if __name__ == '__main__':
