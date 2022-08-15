@@ -1,4 +1,5 @@
 from sql_connectors import connect_single
+from teams_notifs import send_error_msg
 
 
 def get_files_to_move(logger, folder):
@@ -8,9 +9,13 @@ def get_files_to_move(logger, folder):
     WHERE up_to_date = False
     AND folder_name = '{folder}'
     '''
-    files = [f[0] for f in connect_single(logger, query, get=True)]
 
-    return files
+    try:
+        files = [f[0] for f in connect_single(logger, query, get=True)]
+        return files
+    except Exception as e:
+        logger.error(f'failed to retrieve files from db : {e}')
+        send_error_msg('Failed to retrieve files from db, check logs for more details')
 
 
 def get_folders_to_sync(logger):
@@ -33,11 +38,16 @@ def get_folders_to_sync(logger):
 
     SELECT folder_name 
         FROM data
-    WHERE running_count < 5000
+    WHERE running_count < 15000
     '''
-    folders = [f[0] for f in connect_single(logger, query, get=True)]
 
-    return folders
+    try:
+        folders = [f[0] for f in connect_single(logger, query, get=True)]
+        return folders
+    except Exception as e:
+        logger.critical(f'failed to retrieve folders from db : {e}')
+        send_error_msg('Failed to retrieve folders from db, check logs for more details')
+        raise
 
 
 def update_file(logger, folder, file):
@@ -47,4 +57,8 @@ def update_file(logger, folder, file):
     WHERE folder_name = '{folder}' 
     AND file_name = '{file}'
     """
-    connect_single(logger, query)
+    try:
+        connect_single(logger, query)
+    except Exception as e:
+        logger.error(f'failed to update folder from db : {e}')
+        send_error_msg('Failed to update folder from db, check logs for more details')
