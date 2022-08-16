@@ -45,7 +45,7 @@ def get_folders_to_sync(logger):
 
     SELECT folder_name, running_count 
         FROM data
-    WHERE running_count < 15000
+    WHERE running_count < 10000
     '''
 
     try:
