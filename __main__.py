@@ -12,7 +12,7 @@ def main():
     logger = create_logger(os.path.join(config.get('LOGGING', 'LOGGING_PATH'), f'{date.today()}.log'),
                            __file__,
                            config.get('LOGGING', 'LOGGING_LEVEL'))
-    #move_folders(logger)
+    move_folders(logger)
     update_infographic(logger)
 
 
