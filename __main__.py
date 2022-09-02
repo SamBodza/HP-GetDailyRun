@@ -4,6 +4,7 @@ from datetime import date
 from config_parser import get_config
 from create_logger import create_logger
 from get_files_to_run import move_folders
+from infographics import update_infographic
 
 
 def main():
@@ -11,7 +12,8 @@ def main():
     logger = create_logger(os.path.join(config.get('LOGGING', 'LOGGING_PATH'), f'{date.today()}.log'),
                            __file__,
                            config.get('LOGGING', 'LOGGING_LEVEL'))
-    move_folders(logger)
+    #move_folders(logger)
+    update_infographic(logger)
 
 
 if __name__ == '__main__':

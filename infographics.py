@@ -1,17 +1,4 @@
-from sql_connectors import connect_single
-
-error_query = """
-    with errs as (
-        SELECT error_message, COUNT(error_message) as freq
-            FROM librarian.parse_metadata
-        GROUP BY error_message
-    )
-    
-    SELECT *
-        FROM errs
-    WHERE freq > 0
-        ORDER BY freq DESC
-"""
+from sql_connectors import connect_single, connect_single_2
 
 sdb_count_query = """
     SELECT COUNT(id)
@@ -25,25 +12,62 @@ dicom_count_query = """
     WHERE bucket = 'dicom'
 """
 
-pdb_perc_query = """
-    with total as (
-        SELECT COUNT(DISTINCT(folder_name))
-            FROM heidelberg.working_files
-        WHERE up_to_date = True),
-    
-    pdbs as (SELECT (COUNT(DISTINCT(file_name)))
+folder_count_query = """
+    SELECT COUNT(DISTINCT folder_name)
         FROM heidelberg.working_files
-    WHERE folder_name IN (
-        SELECT DISTINCT(folder_name)
+"""
+
+processed_folder_count_query = """
+    SELECT COUNT(DISTINCT folder_name)
+        FROM heidelberg.working_files
+    WHERE up_to_date
+"""
+
+missing_pdb_query = """
+    with PDBS as (
+        SELECT DISTINCT folder_name
             FROM heidelberg.working_files
-        WHERE up_to_date = True)
-    AND file_name LIKE '%.pdb')
+        WHERE file_name LIKE '%.pdb'
+    )
     
-    SELECT (100.0 * (SELECT * FROM pdbs) / (SELECT * FROM total)) as pdb_perc
+    SELECT COUNT(DISTINCT folder_name)
+        FROM heidelberg.working_files
+    WHERE folder_name NOT IN (
+		SELECT *
+			FROM PDBS
+	)
 """
 
 
+def get_pipeline_data(logger):
+    sdb_count = connect_single_2(logger, sdb_count_query, get=True)
+    dcm_count = connect_single_2(logger, dicom_count_query, get=True)
+
+    return sdb_count, dcm_count
 
 
+def get_librarian_data(logger):
+    folder_count = connect_single(logger, folder_count_query, get=True)
+    p_folder_count = connect_single(logger, processed_folder_count_query, get=True)
+    pdb = connect_single(logger, missing_pdb_query, get=True)
+
+    return folder_count, p_folder_count, pdb
 
 
+def get_infograph_data(logger):
+    sdb_count, dcm_count = get_pipeline_data(logger)
+    folder_count, p_folder_count, pdb = get_librarian_data(logger)
+
+    print(sdb_count, dcm_count, folder_count, p_folder_count, pdb)
+
+    return sdb_count, dcm_count, folder_count, p_folder_count, pdb
+
+
+def update_infographic(logger):
+    sdb_count, dcm_count, folder_count, p_folder_count, pdb = get_infograph_data(logger)
+    insert_into_db_query = f"""
+        INSERT INTO heidelberg.working_directory_metadata(
+    	    date_ran, number_of_folders, percentage_folders_processed, folders_without_pdbs, sbd_count, dicom_count)
+    	VALUES (CURRENT_DATE, {folder_count}, {100 * p_folder_count / folder_count}, {pdb}, {sdb_count}, {dcm_count});
+
+    """
