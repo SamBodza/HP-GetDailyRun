@@ -58,7 +58,7 @@ def get_infograph_data(logger):
     sdb_count, dcm_count = get_pipeline_data(logger)
     folder_count, p_folder_count, pdb = get_librarian_data(logger)
 
-    print(sdb_count, dcm_count, folder_count, p_folder_count, pdb)
+    #print(sdb_count, dcm_count, folder_count, p_folder_count, pdb)
 
     return sdb_count, dcm_count, folder_count, p_folder_count, pdb
 
@@ -71,3 +71,7 @@ def update_infographic(logger):
     	VALUES (CURRENT_DATE, {folder_count}, {100 * p_folder_count / folder_count}, {pdb}, {sdb_count}, {dcm_count});
 
     """
+
+    print(insert_into_db_query)
+
+    connect_single(logger, insert_into_db_query)
