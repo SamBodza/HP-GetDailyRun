@@ -40,16 +40,16 @@ missing_pdb_query = """
 
 
 def get_pipeline_data(logger):
-    sdb_count = connect_single_2(logger, sdb_count_query, get=True)[0]
-    dcm_count = connect_single_2(logger, dicom_count_query, get=True)[0]
+    sdb_count = connect_single_2(logger, sdb_count_query, get=True)[0][0]
+    dcm_count = connect_single_2(logger, dicom_count_query, get=True)[0][0]
 
     return sdb_count, dcm_count
 
 
 def get_librarian_data(logger):
-    folder_count = connect_single(logger, folder_count_query, get=True)[0]
-    p_folder_count = connect_single(logger, processed_folder_count_query, get=True)[0]
-    pdb = connect_single(logger, missing_pdb_query, get=True)[0]
+    folder_count = connect_single(logger, folder_count_query, get=True)[0][0]
+    p_folder_count = connect_single(logger, processed_folder_count_query, get=True)[0][0]
+    pdb = connect_single(logger, missing_pdb_query, get=True)[0][0]
 
     return folder_count, p_folder_count, pdb
 
